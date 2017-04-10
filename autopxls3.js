@@ -67,7 +67,7 @@ Botnet.prototype.start = function() {
 /////////////////////////////////////////////////////
 //== Const ==//
 var FORCE_DELAY = 3000;
-var DRAW_DELAY = 3000;
+var DRAW_DELAY = 1000;
 var RETRY_DELAY = 12000;
  
 function launchBot(bot) {
