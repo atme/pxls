@@ -71,7 +71,7 @@ var DRAW_DELAY = 3000;
 var RETRY_DELAY = 12000;
  
 function launchBot(bot) {
-    var flag = false;
+    // var flag = false;
     /*
     bot.image
     bot.template
@@ -89,15 +89,15 @@ function launchBot(bot) {
         var t = (App.cooldown-(new Date).getTime()) / 1E3;
         console.log(t);
         if (t > 0) {
-            flag = false;
+            // flag = false;
             console.log("draw delay");
             setTimeout(draw, DRAW_DELAY);
         }
         else {
-            if (!flag) {
+            // if (!flag) {
                 drawPixel();
-                flag = true;
-            }
+                // flag = true;
+            // }
             console.log("retry delay");
             setTimeout(draw, RETRY_DELAY);
         }
