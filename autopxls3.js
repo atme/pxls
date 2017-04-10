@@ -66,9 +66,9 @@ Botnet.prototype.start = function() {
 }
 /////////////////////////////////////////////////////
 //== Const ==//
-var FORCE_DELAY = 1000;
-var DRAW_DELAY = 1000;
-var RETRY_DELAY = 4000;
+var FORCE_DELAY = 3000;
+var DRAW_DELAY = 3000;
+var RETRY_DELAY = 12000;
  
 function launchBot(bot) {
     var flag = false;
@@ -81,6 +81,7 @@ function launchBot(bot) {
     forceDraw();
     //
     function forceDraw() {
+        print("forceDraw");
         setTimeout(draw, FORCE_DELAY);
     }
     function draw() {
@@ -89,6 +90,7 @@ function launchBot(bot) {
         //console.log(t);
         if (t > 0) {
             flag = false;
+            print("draw delay");
             setTimeout(draw, DRAW_DELAY);
         }
         else {
@@ -96,6 +98,7 @@ function launchBot(bot) {
                 drawPixel();
                 flag = true;
             }
+            print("retry delay");
             setTimeout(draw, RETRY_DELAY);
         }
     }
