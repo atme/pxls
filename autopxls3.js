@@ -87,7 +87,7 @@ function launchBot(bot) {
     function draw() {
         // TOODO
         var t = (App.cooldown-(new Date).getTime()) / 1E3;
-        //console.log(t);
+        console.log(t);
         if (t > 0) {
             flag = false;
             console.log("draw delay");
