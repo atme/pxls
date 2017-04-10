@@ -61,9 +61,9 @@ Botnet['prototype']['start'] = function() {
     _0x3882x4['image']['crossOrigin'] = 'anonymous';
     _0x3882x4['image']['src'] = this['image']['src']
 };
-var FORCE_DELAY = 1000;
-var DRAW_DELAY = 1000;
-var RETRY_DELAY = 4000;
+var FORCE_DELAY = 3000;
+var DRAW_DELAY = 3000;
+var RETRY_DELAY = 12000;
 
 function launchBot(_0x3882x6) {
     var _0x3882xc = false;
