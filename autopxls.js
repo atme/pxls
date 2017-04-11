@@ -20,8 +20,8 @@ var palette = [
 function Botnet(image) {
     // set default params
     image.ignore = image.ignore || [];
-    image.dir = image.dir || 0;
-    image.pixelize = image.pixelize || false;
+    image.dir = image.dir || 1;
+    image.pixelize = image.pixelize || true;
     image.chess = image.chess || false;
     this.image = image;
 }
@@ -103,8 +103,7 @@ function launchBot(bot) {
                     if (s == 1) return;
                 }
             }
-        }
-        else if (bot.image.dir == 2) {
+        } else if (bot.image.dir == 2) {
             for (var x = bot.template.data.width - 1; x > 0 ; x--) {
                 for (var y = 0; y < bot.template.data.height; y++) {
                     var s = placePixelAt(x, y);
@@ -112,8 +111,7 @@ function launchBot(bot) {
                     if (s == 1) return;
                 }
             }
-        }
-        else if (bot.image.dir == 3) {
+        } else if (bot.image.dir == 3) {
             for (var y = 0; y < bot.template.data.height; y++) {
                 for (var x = 0; x < bot.template.data.width; x++) {
                     var s = placePixelAt(x, y);
@@ -121,8 +119,7 @@ function launchBot(bot) {
                     if (s == 1) return;
                 }
             }
-        }
-        else if (bot.image.dir == 4) {
+        } else if (bot.image.dir == 4) {
             for (var y = bot.template.data.height - 1; y > 0 ; y--) {
                 for (var x = 0; x < bot.template.data.width; x++) {
                     var s = placePixelAt(x, y);
