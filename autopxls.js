@@ -56,8 +56,6 @@ Botnet.prototype.start = function() {
                 App.alert("Incorrect color " + v.pixel + " at ["+ v.x +", "+ v.y +"]");
                 return;
             }
-            else
-                console.log("Template valid true");
         }
         App.alert("Title: " + bot.image.title);
         launchBot(bot);
@@ -82,24 +80,15 @@ function launchBot(bot) {
     forceDraw();
     //
     function forceDraw() {
-        console.log("forceDraw");
         setTimeout(draw, FORCE_DELAY);
     }
     function draw() {
         // TOODO
         var t = (App.cooldown-(new Date).getTime()) / 1E3;
-        console.log(t);
         if (t > 0) {
-            // flag = false;
-            console.log("draw delay");
             setTimeout(draw, DRAW_DELAY);
-        }
-        else {
-            // if (!flag) {
-                drawPixel();
-                // flag = true;
-            // }
-            console.log("retry delay");
+        } else {
+            drawPixel();
             setTimeout(draw, RETRY_DELAY);
         }
     }
