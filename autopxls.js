@@ -1,213 +1,264 @@
 
-
-
-function AutoPXLS(images){
-//
-
-  function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-  }
-
-  images = shuffle(images);
-
-// ===
-  
-  if (Notification.permission !== "granted")
-    Notification.requestPermission();
-
-  var om = App.socket.onmessage;
-
-  App.socket.onmessage = function(message){
-    var m = JSON.parse(message.data);
-
-    if(m.type == "captcha_required"){
-      if (Notification.permission !== "granted")
-        Notification.requestPermission();
-      else {
-        var notification = new Notification('Notification title', {
-          body: "Hey there! Enter the captcha!",
-        });
-      }
-    }
-
-    om(message);
-  }
-//
-
-
-
-  var Painter = function(config){
-    var board = document.getElementById("board").getContext('2d');
-    var title = config.title || "unnamed";
-
-    var img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = config.image;
-    var x = config.x;
-    var y = config.y;
-
-    var canvas = document.createElement('canvas');
-    var image;
-
-    var image_loaded_flag = false;
-
-
-    function isSamePixelColor(coords){
-      var board_pixel = board.getImageData((parseInt(x) + parseInt(coords["x"])), (parseInt(y) + parseInt(coords["y"])), 1, 1).data;
-      var image_pixel = image.getImageData(coords["x"], coords["y"], 1, 1).data;
-
-      if(image_pixel[3] <= 127) return true;
-
-      for(var i = 0; i < 3; i++){
-        if(board_pixel[i] != image_pixel[i]) return false;
-      }
-      return true;
-    }
-
-    function getColorId(coords){
-      var pixel = image.getImageData(coords["x"], coords["y"], 1, 1).data;
-      var colors = [
-        [255,255,255],
-        [228,228,228],
-        [136,136,136],
-        [34,34,34],
-        [255,167,209],
-        [229,0,0],
-        [229,149,0],
-        [160,106,66],
-        [229,217,0],
-        [148,224,68],
-        [2,190,1],
-        [0,211,221],
-        [0,131,199],
-        [0,0,234],
-        [207,110,228],
-        [130,0,128]
-      ];
-
-      var color_id = -1;
-      var flag = false;
-      for(var i = 0; i < colors.length; i++){
-        flag = true;
-        for(var j = 0; j < 3; j++){
-          if(pixel[j] != colors[i][j]){
-            flag = false;
-            break;
-          }
-        }
-        if(flag){
-          color_id = i;
-          break;
-        }
-      }
-      // if(color_id < 0)
-        // console.log("pixel at x:" + coords.x + " y: " + coords.y + " has incorrect color.");
-      
-      return color_id;
-    }
-
-    function tryToDraw(){
-      for(var _y = 0; _y < canvas.height; _y++){
-        for(var _x = 0; _x < canvas.width; _x++){
-          var coords = {x: _x, y: _y};
-
-          if(isSamePixelColor(coords)){
-            //console.log("same color, skip");
-          }
-          else{
-
-            var color_id = getColorId(coords);
-            if(color_id < 0) continue;
-
-            console.log("drawing " + title + " coords " + " x:" + (parseInt(x) + parseInt(coords["x"])) + " y:" + (parseInt(y) + parseInt(coords["y"])));
-
-            App.switchColor(color_id);
-            App.attemptPlace ( (parseInt(x) + parseInt(coords["x"])), (parseInt(y) + parseInt(coords["y"])) );
-            return 20;
-          }
-        }
-      }
-      console.log(title + " is correct");
-      return -1;
-    }
-
-    function drawImage(){
-      if(image_loaded_flag){
-        return tryToDraw();
-      }
-      return -1;
-    }
-
-    function isReady(){
-      return image_loaded_flag;
-    }
-
-    img.onload = function(){
-      canvas.width = img.width;
-      canvas.height = img.height;
-      image = canvas.getContext('2d');
-      image.drawImage(img, 0, 0, img.width, img.height);
-
-      image_loaded_flag = true;
+var palette = [
+    [255,255,255],
+    [228,228,228],
+    [136,136,136],
+    [34,34,34],
+    [255,167,209],
+    [229,0,0],
+    [229,149,0],
+    [160,106,66],
+    [229,217,0],
+    [148,224,68],
+    [2,190,1],
+    [0,211,221],
+    [0,131,199],
+    [0,0,234],
+    [207,110,228],
+    [130,0,128]
+];
+function Botnet(image) {
+    // set default params
+    image.ignore = image.ignore || [];
+    image.dir = image.dir || 0;
+    image.pixelize = image.pixelize || false;
+    image.chess = image.chess || false;
+    this.image = image;
+}
+Botnet.prototype.start = function() {
+    var template = {
+        image: new Image(),
+        canvas: document.createElement('canvas'),
+        context: null,
+        data: null
     };
+    var board = {
+        canvas: document.getElementById('board'),
+        context: null,
+        data: null
+    };
+    template.context = template.canvas.getContext('2d');
+    board.context = board.canvas.getContext('2d');
+    this.template = template;
+    this.board = board;
+    var bot = this;
+    template.image.onload = function() {
+        template.canvas.width = template.image.width;
+        template.canvas.height = template.image.height;
+        template.context.drawImage(template.image, 0, 0 );
 
+        board.data = updateBoardData(board);
+        template.data = template.context.getImageData(0, 0, template.image.width, template.image.height);
 
-
-    return {
-      drawImage: drawImage,
-      isReady: isReady
-    }
-  };
-
-
-  var painters = [];
-  for(var i = 0; i < images.length; i++){
-    painters[i] = Painter(images[i]);
-  }
-
-  function draw(){
-    var timer = (App.cooldown-(new Date).getTime())/1E3;
-    if(0<timer){
-      console.log("timer: " + timer);
-      setTimeout(draw, 1000);
-    }
-    else{
-      for(var i = 0; i < painters.length; i++){
-        if(painters[i].isReady()){
-          var result = painters[i].drawImage();
-
-          if(result > 0){
-            setTimeout(draw, result*1000);
-            return;
-          }
-          else{
-            continue;
-          }
+        if (!bot.image.pixelize) {
+            var v = validateTemplate(template.data);
+            if (!v.valid) {
+                App.alert("Incorrect color " + v.pixel + " at ["+ v.x +", "+ v.y +"]");
+                return;
+            }
+            else
+                console.log("Template valid true");
         }
-        else{
-          continue;
-        }
-      }
-      setTimeout(draw, 3000);
+        App.alert("Title: " + bot.image.title);
+        launchBot(bot);
+    };
+    template.image.crossOrigin = "anonymous";
+    template.image.src = this.image.src;
+}
+/////////////////////////////////////////////////////
+//== Const ==//
+var FORCE_DELAY = 3000;
+var DRAW_DELAY = 1000;
+var RETRY_DELAY = 12000;
+
+function launchBot(bot) {
+    // var flag = false;
+    /*
+    bot.image
+    bot.template
+    bot.board
+    */
+    initBotUI();
+    forceDraw();
+    //
+    function forceDraw() {
+        console.log("forceDraw");
+        setTimeout(draw, FORCE_DELAY);
     }
+    function draw() {
+        // TOODO
+        var t = (App.cooldown-(new Date).getTime()) / 1E3;
+        console.log(t);
+        if (t > 0) {
+            // flag = false;
+            console.log("draw delay");
+            setTimeout(draw, DRAW_DELAY);
+        }
+        else {
+            // if (!flag) {
+                drawPixel();
+                // flag = true;
+            // }
+            console.log("retry delay");
+            setTimeout(draw, RETRY_DELAY);
+        }
+    }
+    function drawPixel() {
+        bot.board.data = updateBoardData(bot.board);
 
-    return;
-  }
+        if (bot.image.dir == 1) {
+            for (var x = 0; x < bot.template.data.width; x++) {
+                for (var y = 0; y < bot.template.data.height; y++) {
+                    var s = placePixelAt(x, y);
+                    if (s == 0) continue;
+                    if (s == 1) return;
+                }
+            }
+        }
+        else if (bot.image.dir == 2) {
+            for (var x = bot.template.data.width - 1; x > 0 ; x--) {
+                for (var y = 0; y < bot.template.data.height; y++) {
+                    var s = placePixelAt(x, y);
+                    if (s == 0) continue;
+                    if (s == 1) return;
+                }
+            }
+        }
+        else if (bot.image.dir == 3) {
+            for (var y = 0; y < bot.template.data.height; y++) {
+                for (var x = 0; x < bot.template.data.width; x++) {
+                    var s = placePixelAt(x, y);
+                    if (s == 0) continue;
+                    if (s == 1) return;
+                }
+            }
+        }
+        else if (bot.image.dir == 4) {
+            for (var y = bot.template.data.height - 1; y > 0 ; y--) {
+                for (var x = 0; x < bot.template.data.width; x++) {
+                    var s = placePixelAt(x, y);
+                    if (s == 0) continue;
+                    if (s == 1) return;
+                }
+            }
+        }
+    }
+    function placePixelAt(x, y) {
+        var bx = x + bot.image.x;
+        var by = y + bot.image.y;
+        var pt = getPixel(bot.template.data, x, y);
+        var pb = getPixel(bot.board.data, bx, by);
 
-  draw();
+        if (pt[3] <= 127) // alpha
+            return 0;
+        // ignore color
+        for (var _i = 0; _i < bot.image.ignore.length; _i++) {
+            if (pixelEquals(bot.image.ignore[_i], pt)) {
+                return 0;
+            }
+        }
+
+        if (bot.image.pixelize) { // pixelize
+            pt = nearesColors(pt);
+        }
+
+        if (bot.image.chess) {
+            var up = getPixel(bot.board.data, bx, by - 1);
+            var down = getPixel(bot.board.data, bx, by + 1);
+            var left = getPixel(bot.board.data, bx - 1, by);
+            var right = getPixel(bot.board.data, bx + 1, by);
+
+            if (pixelEquals(pt, up)   ||
+                pixelEquals(pt, down) ||
+                pixelEquals(pt, left) ||
+                pixelEquals(pt, right)
+            ) {
+                return 0;
+            }
+        }
+
+        if (!pixelEquals(pt, pb)) {
+            var col = getColorIndex(pt);
+            App.color = col;
+            App.attemptPlace(bx, by);
+            App.alert(bot.image.title + " Placed at ["+(bx)+", "+(by)+"] Color " + col);
+            return 1;
+        }
+    }
+    function initBotUI() {
+        var ui = $("#ui");
+        ui.append('<div class="panel" style="position: absolute;bottom: 100px;right: 32px;">'+
+            bot.image.title+
+            "<br>["+(bot.image.x)+", "+(bot.image.y)+"]"+
+            '<br><button id="restartbot">Restart Bot</button></div>');
+        ui.find("#restartbot").click(function(){
+            drawPixel();
+        });
+    }
+}
+
+//== Helpers ==//
+function updateBoardData(board) {
+  jQuery.get("/boarddata", function(a){
+    for (var b = board.context, c = new ImageData(App.width,App.height), d = new Uint32Array(c.data.buffer), f = App.palette.map(function(b) {
+            b = hexToRgb(b);
+            return 4278190080 | b.b << 16 | b.g << 8 | b.r
+        }), e = 0; e < App.width * App.height; e++)
+            d[e] = f[a.charCodeAt(e)];
+    b.putImageData(c, 0, 0)
+  });
+    return board.context.getImageData(0, 0, board.canvas.width, board.canvas.height);
+}
+function validateTemplate(data) {
+    for (var x = 0; x < data.width; x++)
+        for (var y = 0; y < data.height; y++) {
+            var pt = getPixel(data, x, y);
+            if (pt[3] <= 127) continue;
+            if (getColorIndex(pt)) {
+                return {valid: false, pixel: pt, x: x, y: y}
+            }
+        }
+    return {valid: true};
+}
+//
+function getColorIndex(rgb) {
+    for (var i = 0; i < palette.length; i++)
+        if (pixelEquals(palette[i], rgb))
+            return i;
+    return -1;
+}
+function getPixel(data, x, y) {
+    var m = y * data.width * 4;
+    var n = x * 4;
+    var s = m + n;
+    return data.data.slice(s, s+4);
+}
+function pixelEquals(a, b) { // compare without Alpha
+    return (
+        a[0] == b[0] &&
+        a[1] == b[1] &&
+        a[2] == b[2]);
+}
+
+function nearesColors(color) {
+    var ar = [];
+    for (var i = 0; i < palette.length; i++) {
+        var d = colorDistance(palette[i], color);
+        ar.push(d);
+    }
+    var m = arrayMinIndex(ar);
+    return palette[m];
+}
+function arrayMinIndex(a) {
+    var m = a[0];
+    var mi = 0;
+    for (var i = 0; i < a.length; i++)
+        if (a[i] < m) {
+            m = a[i];
+            mi = i;
+        }
+    return mi;
+}
+function colorDistance(a, b) {
+    return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
 }
