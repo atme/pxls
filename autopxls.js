@@ -167,7 +167,6 @@ function launchBot(bot) {
             var col = getColorIndex(pt);
             App.color = col;
             App.attemptPlace(bx, by);
-            App.alert(bot.image.title + " Placed at ["+(bx)+", "+(by)+"] Color " + col);
             return 1;
         }
     }
