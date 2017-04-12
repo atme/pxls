@@ -24,6 +24,7 @@ function Botnet(image) {
     image.dir = image.dir || 1;
     image.pixelize = image.pixelize || true;
     image.chess = image.chess || false;
+    image.notification = image.notification || true;
     this.image = image;
 }
 Botnet.prototype.start = function() {
@@ -63,6 +64,22 @@ Botnet.prototype.start = function() {
     };
     template.image.crossOrigin = "anonymous";
     template.image.src = this.image.src;
+
+    if (this.image.notification) {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        App.socket.onmessage = function(message) {
+            var m = JSON.parse(message.data);
+
+            if(m.type === "captcha_required") {
+                var notification = new Notification('Notification title', {
+                  body: "Hey there! Enter the captcha!",
+                });
+            }
+        };
+    }
 }
 /////////////////////////////////////////////////////
 //== Const ==//
