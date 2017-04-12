@@ -14,7 +14,8 @@
             src: "https://i.imgur.com/u8yZ7zc.png", // link to image
             x: 1147, // first x coordinate
             y: 1192, // first y coordinate
-            ignore: [255, 255, 255], // default: []; colors, which the script has to ignore
+            ignore: [[255, 255, 255]], // default: []; colors, which the script has to ignore
+            replace: [[34, 34, 34]], // default: []; colors, which the script has to replace on canvas
             dir: 1, // default: 1; how the script have to move
             pixelize: true, // default: true; must the script automatically pick right colors?
             chess: true // default: false; must the script draw pixels like chess?
