@@ -105,7 +105,7 @@ function launchBot(bot) {
         setTimeout(draw, FORCE_DELAY);
     }
     function draw() {
-        if (this.image.notification) {
+        if (bot.image.notification) {
             App.hasFiredNotification = true;
         }
 
