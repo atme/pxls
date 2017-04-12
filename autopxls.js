@@ -44,6 +44,7 @@ Botnet.prototype.start = function() {
     this.template = template;
     this.board = board;
     var bot = this;
+    bot.notification = "none";
     template.image.onload = function() {
         template.canvas.width = template.image.width;
         template.canvas.height = template.image.height;
@@ -70,14 +71,17 @@ Botnet.prototype.start = function() {
             Notification.requestPermission();
         }
 
+        var onmessage = App.socket.onmessage;
         App.socket.onmessage = function(message) {
             var m = JSON.parse(message.data);
 
-            if(m.type === "captcha_required") {
+            if (m.type === "captcha_required" && bot.notification === "none") {
+                bot.notification = "shown";
                 var notification = new Notification('Notification title', {
                   body: "Hey there! Enter the captcha!",
                 });
             }
+            return onmessage(message);
         };
     }
 }
@@ -104,6 +108,7 @@ function launchBot(bot) {
         // TOODO
         var t = (App.cooldown-(new Date).getTime()) / 1E3;
         if (t > 0) {
+            bot.notification = "none";
             setTimeout(draw, DRAW_DELAY);
         } else {
             drawPixel();

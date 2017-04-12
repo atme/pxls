@@ -19,7 +19,7 @@
             dir: 1, // default: 1; how the script has to move
             pixelize: true, // default: true; must the script automatically pick right colors?
             chess: true // default: false; must the script draw pixels like chess?
-            notification: true // default: false; show captcha notification?
+            notification: true // default: true; show captcha notification?
         });
         b.start();
     }
