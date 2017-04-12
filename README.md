@@ -7,7 +7,7 @@
 (function(){
     var _script = document.createElement('script');
     _script.type = "text/javascript";
-    _script.src = "https://gitcdn.xyz/repo/atme/pxls/master/autopxls.js";
+    _script.src = "https://rawgit.com/atme/pxls/master/autopxls.js";
     _script.onload = function() {
         var b = new Botnet({
             title: "chan", // title of botnet

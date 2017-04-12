@@ -167,15 +167,16 @@ function launchBot(bot) {
             var col = getColorIndex(pt);
             App.color = col;
             App.attemptPlace(bx, by);
+            showCoordinates(bx, by);
             return 1;
         }
     }
     function initBotUI() {
-        var ui = $("#ui");
+        var ui = $('#ui');
         ui.append('<div class="panel" style="position: absolute;bottom: 100px;right: 32px;">'+
             bot.image.title+
-            "<br>["+(bot.image.x)+", "+(bot.image.y)+"]"+
-            '<br><button id="restartbot">Restart Bot</button></div>');
+            '<div class="coordinates">['+(bot.image.x)+', '+(bot.image.y)+']</div>'+
+            '<button id="restartbot">Restart Bot</button></div>');
         ui.find("#restartbot").click(function(){
             drawPixel();
         });
@@ -246,4 +247,7 @@ function arrayMinIndex(a) {
 }
 function colorDistance(a, b) {
     return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+}
+function showCoordinates(x, y) {
+    $('#ui .coordinates').text('[' + x + ', ' + y + ']');
 }
