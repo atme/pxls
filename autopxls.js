@@ -77,7 +77,7 @@ Botnet.prototype.start = function() {
 
             if (m.type === "captcha_required" && bot.notification === "none") {
                 bot.notification = "shown";
-                var notification = new Notification('Notification title', {
+                var notification = new Notification('pxls.space', {
                   body: "Hey there! Enter the captcha!",
                 });
             }
@@ -105,7 +105,10 @@ function launchBot(bot) {
         setTimeout(draw, FORCE_DELAY);
     }
     function draw() {
-        // TOODO
+        if (this.image.notification) {
+            App.hasFiredNotification = true;
+        }
+
         var t = (App.cooldown-(new Date).getTime()) / 1E3;
         if (t > 0) {
             bot.notification = "none";
