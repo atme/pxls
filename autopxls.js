@@ -20,6 +20,7 @@ var palette = [
 function Botnet(image) {
     // set default params
     image.ignore = image.ignore || [];
+    image.replace = image.replace || [];
     image.dir = image.dir || 1;
     image.pixelize = image.pixelize || true;
     image.chess = image.chess || false;
@@ -135,11 +136,19 @@ function launchBot(bot) {
         var pt = getPixel(bot.template.data, x, y);
         var pb = getPixel(bot.board.data, bx, by);
 
-        if (pt[3] <= 127) // alpha
+        if (pt[3] <= 127) { // alpha
             return 0;
+        }
         // ignore color
-        for (var _i = 0; _i < bot.image.ignore.length; _i++) {
-            if (pixelEquals(bot.image.ignore[_i], pt)) {
+        for (var ii in bot.image.ignore) {
+            if (pixelEquals(bot.image.ignore[ii], pt)) {
+                return 0;
+            }
+        }
+
+        // replace color
+        for (var ir in bot.image.replace) {
+            if (!pixelEquals(bot.image.replace[ir], pb)) {
                 return 0;
             }
         }
