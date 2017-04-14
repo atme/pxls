@@ -1,0 +1,30 @@
+{
+  "name": "pxls",
+  "version": "1.0.0",
+  "description": "Minibot for drawing your own images on pxls.space",
+  "main": "autopxls.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atme/pxls.git"
+  },
+  "keywords": [
+    "pxls",
+    "bot"
+  ],
+  "author": "Sergey Pirogov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atme/pxls/issues"
+  },
+  "homepage": "https://github.com/atme/pxls#readme",
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.3.3",
+    "webpack": "^2.3.3"
+  }
+}
