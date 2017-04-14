@@ -164,7 +164,7 @@ export default class Bot {
       let m = y * data.width * 4;
       let n = x * 4;
       let s = m + n;
-      return data.data.slice(s, s+3);
+      return data.data.slice(s, s + 4);
   }
 
   pixelEquals(a, b) { // compare without Alpha

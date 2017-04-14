@@ -311,7 +311,7 @@ var Bot = function () {
             var m = y * data.width * 4;
             var n = x * 4;
             var s = m + n;
-            return data.data.slice(s, s + 3);
+            return data.data.slice(s, s + 4);
         }
     }, {
         key: "pixelEquals",
