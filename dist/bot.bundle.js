@@ -128,7 +128,7 @@ var Bot = function () {
     }, {
         key: "setNotifications",
         value: function setNotifications() {
-            if (this.notification) {
+            if (!this.notification) {
                 return;
             }
 

@@ -31,7 +31,7 @@ export default class Bot {
   }
 
   setNotifications() {
-    if (this.notification) {
+    if (!this.notification) {
       return;
     }
 
