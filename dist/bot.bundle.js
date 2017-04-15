@@ -63,11 +63,119 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _pixel = __webpack_require__(1);
+
+var _pixel2 = _interopRequireDefault(_pixel);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Canvas = function () {
+  function Canvas() {
+    _classCallCheck(this, Canvas);
+  }
+
+  _createClass(Canvas, [{
+    key: 'getPixel',
+    value: function getPixel(x, y) {
+      var rgba = 4;
+      var coordinate = rgba * (y * this.canvas.width + x);
+      return new _pixel2.default(this.canvas.data.slice(coordinate, coordinate + rgba));
+    }
+  }]);
+
+  return Canvas;
+}();
+
+exports.default = Canvas;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Pixel = function () {
+  function Pixel(pixel) {
+    _classCallCheck(this, Pixel);
+
+    this.r = pixel[0];
+    this.g = pixel[1];
+    this.b = pixel[2];
+    this.a = typeof pixel[3] === 'undefined' ? 255 : pixel[3];
+    this.index = -1;
+  }
+
+  // compare without Alpha
+
+
+  _createClass(Pixel, [{
+    key: 'isEqual',
+    value: function isEqual(pixel) {
+      if (pixel instanceof Pixel === false) {
+        return false;
+      }
+
+      return this.r === pixel.r && this.g === pixel.g && this.b === pixel.b;
+    }
+  }, {
+    key: 'adaptColor',
+    value: function adaptColor() {
+      var _this = this;
+
+      var distance = palette.map(function (color) {
+        return _this.colorDistance(color);
+      });
+      this.index = distance.indexOf(Math.min.apply(Math, _toConsumableArray(distance)));
+      this.r = palette[this.index].r;
+      this.g = palette[this.index].g;
+      this.b = palette[this.index].b;
+    }
+  }, {
+    key: 'colorDistance',
+    value: function colorDistance(color) {
+      return Math.abs(this.r - color.r) + Math.abs(this.g - color.g) + Math.abs(this.b - color.b);
+    }
+  }]);
+
+  return Pixel;
+}();
+
+exports.default = Pixel;
+
+
+var palette = [new Pixel([255, 255, 255]), new Pixel([228, 228, 228]), new Pixel([136, 136, 136]), new Pixel([34, 34, 34]), new Pixel([255, 167, 209]), new Pixel([229, 0, 0]), new Pixel([229, 149, 0]), new Pixel([160, 106, 66]), new Pixel([229, 217, 0]), new Pixel([148, 224, 68]), new Pixel([2, 190, 1]), new Pixel([0, 211, 221]), new Pixel([0, 131, 199]), new Pixel([0, 0, 234]), new Pixel([207, 110, 228]), new Pixel([130, 0, 128])];
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79,15 +187,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _template = __webpack_require__(4);
+var _template = __webpack_require__(5);
 
 var _template2 = _interopRequireDefault(_template);
 
-var _canvas = __webpack_require__(2);
+var _board = __webpack_require__(4);
 
-var _canvas2 = _interopRequireDefault(_canvas);
+var _board2 = _interopRequireDefault(_board);
 
-var _palette = __webpack_require__(3);
+var _pixel = __webpack_require__(1);
+
+var _pixel2 = _interopRequireDefault(_pixel);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -97,36 +207,37 @@ var Bot = function () {
     function Bot(params) {
         _classCallCheck(this, Bot);
 
-        this.title = params.title || '';
-        this.x = params.x || 0;
-        this.y = params.y || 0;
-        this.src = params.src;
-        this.ignore = params.ignore || [];
-        this.replace = params.replace || [];
-        this.dir = params.dir || 1;
-        this.chess = params.chess || false;
-        this.notification = params.notification || true;
-
+        this.setParams(params);
         this.setNotifications();
-
         this.run();
     }
 
     _createClass(Bot, [{
-        key: "run",
+        key: 'run',
         value: function run() {
             var _this = this;
 
-            // this.board = new Board;
-            this.template = _template2.default.setSrc(this.src, function () {
-                // this.board.update();
+            this.board = new _board2.default();
+            this.template = _template2.default.loadImage(this.src, function () {
                 App.alert("Title: " + _this.title);
-                // this.initUI();
                 _this.draw();
             });
         }
     }, {
-        key: "setNotifications",
+        key: 'setParams',
+        value: function setParams(params) {
+            this.title = params.title || '';
+            this.x = params.x || 0;
+            this.y = params.y || 0;
+            this.src = params.src;
+            this.ignore = params.ignore || [];
+            this.replace = params.replace || [];
+            this.dir = params.dir || 1;
+            this.chess = params.chess || false;
+            this.notification = params.notification || true;
+        }
+    }, {
+        key: 'setNotifications',
         value: function setNotifications() {
             if (!this.notification) {
                 return;
@@ -150,7 +261,7 @@ var Bot = function () {
             };
         }
     }, {
-        key: "draw",
+        key: 'draw',
         value: function draw() {
             var _this2 = this;
 
@@ -167,7 +278,7 @@ var Bot = function () {
                 return;
             }
 
-            this.canvas = _canvas2.default.getData();
+            this.board.update();
 
             this.drawPixel();
             setTimeout(function () {
@@ -175,38 +286,38 @@ var Bot = function () {
             }, 2E4);
         }
     }, {
-        key: "drawPixel",
+        key: 'drawPixel',
         value: function drawPixel() {
             var x = void 0;
             var y = void 0;
             var s = void 0;
             if (this.dir == 1) {
-                for (x = 0; x < this.template.data.width; x++) {
-                    for (y = 0; y < this.template.data.height; y++) {
+                for (x = 0; x < this.template.canvas.width; x++) {
+                    for (y = 0; y < this.template.canvas.height; y++) {
                         s = this.placePixelAt(x, y);
                         if (s == 0) continue;
                         if (s == 1) return;
                     }
                 }
             } else if (this.dir == 2) {
-                for (x = this.template.data.width - 1; x > 0; x--) {
-                    for (y = 0; y < this.template.data.height; y++) {
+                for (x = this.template.canvas.width - 1; x > 0; x--) {
+                    for (y = 0; y < this.template.canvas.height; y++) {
                         s = this.placePixelAt(x, y);
                         if (s == 0) continue;
                         if (s == 1) return;
                     }
                 }
             } else if (this.dir == 3) {
-                for (y = 0; y < this.template.data.height; y++) {
-                    for (x = 0; x < this.template.data.width; x++) {
+                for (y = 0; y < this.template.canvas.height; y++) {
+                    for (x = 0; x < this.template.canvas.width; x++) {
                         s = this.placePixelAt(x, y);
                         if (s == 0) continue;
                         if (s == 1) return;
                     }
                 }
             } else if (this.dir == 4) {
-                for (y = this.template.data.height - 1; y > 0; y--) {
-                    for (x = 0; x < this.template.data.width; x++) {
+                for (y = this.template.canvas.height - 1; y > 0; y--) {
+                    for (x = 0; x < this.template.canvas.width; x++) {
                         s = this.placePixelAt(x, y);
                         if (s == 0) continue;
                         if (s == 1) return;
@@ -215,19 +326,19 @@ var Bot = function () {
             }
         }
     }, {
-        key: "placePixelAt",
+        key: 'placePixelAt',
         value: function placePixelAt(x, y) {
             var bx = x + this.x;
             var by = y + this.y;
-            var pt = this.getPixel(this.template.data, x, y);
-            var pb = this.getPixel(this.canvas, bx, by);
+            var pt = this.template.getPixel(x, y);
+            var pb = this.board.getPixel(bx, by);
 
-            if (pt[3] <= 127) {
+            if (pt.a <= 127) {
                 // alpha
                 return 0;
             }
 
-            pt = this.nearesColors(pt);
+            pt.adaptColor();
 
             // ignore color
             var _iteratorNormalCompletion = true;
@@ -238,7 +349,7 @@ var Bot = function () {
                 for (var _iterator = this.ignore[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var ignore = _step.value;
 
-                    if (this.pixelEquals(ignore, pt)) {
+                    if (pt.isEqual(new _pixel2.default(ignore))) {
                         return 0;
                     }
                 }
@@ -267,7 +378,7 @@ var Bot = function () {
                 for (var _iterator2 = this.replace[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var replace = _step2.value;
 
-                    if (!this.pixelEquals(replace, pb)) {
+                    if (!pb.isEqual(new _pixel2.default(replace))) {
                         return 0;
                     }
                 }
@@ -287,72 +398,22 @@ var Bot = function () {
             }
 
             if (this.chess) {
-                var up = this.getPixel(this.canvas, bx, by - 1);
-                var down = this.getPixel(this.canvas, bx, by + 1);
-                var left = this.getPixel(this.canvas, bx - 1, by);
-                var right = this.getPixel(this.canvas, bx + 1, by);
+                var up = this.board.getPixel(bx, by - 1);
+                var down = this.board.getPixel(bx, by + 1);
+                var left = this.board.getPixel(bx - 1, by);
+                var right = this.board.getPixel(bx + 1, by);
 
-                if (this.pixelEquals(pt, up) || this.pixelEquals(pt, down) || this.pixelEquals(pt, left) || this.pixelEquals(pt, right)) {
+                if (pt.isEqual(up) || pt.isEqual(down) || pt.isEqual(left) || pt.isEqual(right)) {
                     return 0;
                 }
             }
 
-            if (!this.pixelEquals(pt, pb)) {
-                var col = this.getColorIndex(pt);
-                App.color = col;
+            if (!pt.isEqual(pb)) {
+                App.color = pt.index;
                 App.attemptPlace(bx, by);
                 console.log('[' + bx + ' ' + by + ']');
                 return 1;
             }
-        }
-    }, {
-        key: "getPixel",
-        value: function getPixel(data, x, y) {
-            var m = y * data.width * 4;
-            var n = x * 4;
-            var s = m + n;
-            return data.data.slice(s, s + 4);
-        }
-    }, {
-        key: "pixelEquals",
-        value: function pixelEquals(a, b) {
-            // compare without Alpha
-            return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
-        }
-    }, {
-        key: "nearesColors",
-        value: function nearesColors(color) {
-            var ar = [];
-            for (var i = 0; i < _palette.palette.length; i++) {
-                var d = this.colorDistance(_palette.palette[i], color);
-                ar.push(d);
-            }
-            var m = this.arrayMinIndex(ar);
-            return _palette.palette[m];
-        }
-    }, {
-        key: "arrayMinIndex",
-        value: function arrayMinIndex(a) {
-            var m = a[0];
-            var mi = 0;
-            for (var i = 0; i < a.length; i++) {
-                if (a[i] < m) {
-                    m = a[i];
-                    mi = i;
-                }
-            }return mi;
-        }
-    }, {
-        key: "colorDistance",
-        value: function colorDistance(a, b) {
-            return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
-        }
-    }, {
-        key: "getColorIndex",
-        value: function getColorIndex(rgb) {
-            for (var i = 0; i < _palette.palette.length; i++) {
-                if (this.pixelEquals(_palette.palette[i], rgb)) return i;
-            }return -1;
         }
     }]);
 
@@ -362,13 +423,13 @@ var Bot = function () {
 exports.default = Bot;
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _bot = __webpack_require__(0);
+var _bot = __webpack_require__(2);
 
 var _bot2 = _interopRequireDefault(_bot);
 
@@ -376,54 +437,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 new _bot2.default(window.config);
 delete window.config;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Canvas = function () {
-  function Canvas() {
-    _classCallCheck(this, Canvas);
-
-    this.canvas = document.getElementById('board');
-    this.data = null;
-  }
-
-  _createClass(Canvas, null, [{
-    key: 'getData',
-    value: function getData() {
-      var canvas = document.getElementById('board');
-      return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-    }
-  }]);
-
-  return Canvas;
-}();
-
-exports.default = Canvas;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var palette = exports.palette = [[255, 255, 255], [228, 228, 228], [136, 136, 136], [34, 34, 34], [255, 167, 209], [229, 0, 0], [229, 149, 0], [160, 106, 66], [229, 217, 0], [148, 224, 68], [2, 190, 1], [0, 211, 221], [0, 131, 199], [0, 0, 234], [207, 110, 228], [130, 0, 128]];
 
 /***/ }),
 /* 4 */
@@ -435,29 +448,114 @@ var palette = exports.palette = [[255, 255, 255], [228, 228, 228], [136, 136, 13
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var template = new Image();
 
-template.canvas = document.createElement('canvas');
-template.data = null;
-template.crossOrigin = "anonymous";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-template.onload = function () {
-  this.canvas.width = this.width;
-  this.canvas.height = this.height;
-  this.canvas.getContext('2d').drawImage(this, 0, 0);
+var _canvas = __webpack_require__(0);
 
-  this.data = this.canvas.getContext('2d').getImageData(0, 0, this.width, this.height);
+var _canvas2 = _interopRequireDefault(_canvas);
 
-  this.afterLoad();
-};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-template.setSrc = function (src, callback) {
-  this.afterLoad = callback;
-  this.src = src;
-  return this;
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-exports.default = template;
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Board = function (_Canvas) {
+  _inherits(Board, _Canvas);
+
+  function Board() {
+    _classCallCheck(this, Board);
+
+    return _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).apply(this, arguments));
+  }
+
+  _createClass(Board, [{
+    key: 'update',
+    value: function update() {
+      var canvas = document.getElementById('board');
+      this.canvas = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    }
+  }]);
+
+  return Board;
+}(_canvas2.default);
+
+exports.default = Board;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _canvas = __webpack_require__(0);
+
+var _canvas2 = _interopRequireDefault(_canvas);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Template = function (_Canvas) {
+  _inherits(Template, _Canvas);
+
+  function Template() {
+    _classCallCheck(this, Template);
+
+    var _this = _possibleConstructorReturn(this, (Template.__proto__ || Object.getPrototypeOf(Template)).call(this));
+
+    _this.setUpCanvas();
+    return _this;
+  }
+
+  _createClass(Template, [{
+    key: 'setUpCanvas',
+    value: function setUpCanvas() {
+      var template = this;
+      var canvas = document.createElement('canvas');
+      this.image = new Image();
+
+      this.image.crossOrigin = "anonymous";
+
+      this.image.onload = function () {
+        canvas.width = this.width;
+        canvas.height = this.height;
+        canvas.getContext('2d').drawImage(this, 0, 0);
+
+        template.canvas = canvas.getContext('2d').getImageData(0, 0, this.width, this.height);
+
+        template.afterLoad();
+      };
+    }
+  }], [{
+    key: 'loadImage',
+    value: function loadImage(src, callback) {
+      var template = new this();
+
+      template.afterLoad = callback;
+      template.image.src = src;
+      return template;
+    }
+  }]);
+
+  return Template;
+}(_canvas2.default);
+
+exports.default = Template;
 
 /***/ })
 /******/ ]);

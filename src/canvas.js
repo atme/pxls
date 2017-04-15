@@ -1,16 +1,11 @@
-export default class Canvas {
-  constructor() {
-    this.canvas = document.getElementById('board');
-    this.data = null;
-  }
+import Pixel from './pixel';
 
-  static getData() {
-    let canvas = document.getElementById('board');
-    return canvas.getContext('2d').getImageData(
-      0,
-      0,
-      canvas.width,
-      canvas.height
+export default class Canvas {
+  getPixel(x, y) {
+    const rgba = 4;
+    let coordinate = rgba * (y * this.canvas.width + x);
+    return new Pixel(
+      this.canvas.data.slice(coordinate, coordinate + rgba)
     );
   }
 }
