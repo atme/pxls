@@ -18,7 +18,7 @@
   };
   var _script = document.createElement('script');
   _script.type = "text/javascript";
-  _script.src = "https://cdn.rawgit.com/atme/pxls/master/dist/bot.bundle.js";
+  _script.src = "https://cdn.rawgit.com/atme/pxls/7a3027c8/dist/bot.bundle.js";
   document.getElementsByTagName('head')[0].appendChild(_script);
 })();
 ```

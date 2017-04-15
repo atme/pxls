@@ -113,25 +113,25 @@ export default class Bot {
   placePixelAt(x, y) {
       let bx = x + this.x;
       let by = y + this.y;
-      let pt = this.template.getPixel(x, y);
-      let pb = this.board.getPixel(bx, by);
+      let templatePixel = this.template.getPixel(x, y);
+      let boardPixel = this.board.getPixel(bx, by);
 
-      if (pt.a <= 127) { // alpha
+      if (templatePixel.a <= 127) { // alpha
           return 0;
       }
 
-      pt.adaptColor();
+      templatePixel.adaptColor();
 
       // ignore color
       for (let ignore of this.ignore) {
-          if (pt.isEqual(new Pixel(ignore))) {
+          if (templatePixel.isEqual(new Pixel(ignore))) {
               return 0;
           }
       }
 
       // replace color
       for (let replace of this.replace) {
-          if (!pb.isEqual(new Pixel(replace))) {
+          if (!boardPixel.isEqual(new Pixel(replace))) {
               return 0;
           }
       }
@@ -142,17 +142,17 @@ export default class Bot {
           let left = this.board.getPixel(bx - 1, by);
           let right = this.board.getPixel(bx + 1, by);
 
-          if (pt.isEqual(up)   ||
-              pt.isEqual(down) ||
-              pt.isEqual(left) ||
-              pt.isEqual(right)
+          if (templatePixel.isEqual(up)   ||
+              templatePixel.isEqual(down) ||
+              templatePixel.isEqual(left) ||
+              templatePixel.isEqual(right)
           ) {
               return 0;
           }
       }
 
-      if (!pt.isEqual(pb)) {
-          App.color = pt.index;
+      if (!templatePixel.isEqual(boardPixel)) {
+          App.color = templatePixel.index;
           App.attemptPlace(bx, by);
           console.log('['+bx+' '+by+']');
           return 1;

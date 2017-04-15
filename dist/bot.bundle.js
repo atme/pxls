@@ -330,15 +330,15 @@ var Bot = function () {
         value: function placePixelAt(x, y) {
             var bx = x + this.x;
             var by = y + this.y;
-            var pt = this.template.getPixel(x, y);
-            var pb = this.board.getPixel(bx, by);
+            var templatePixel = this.template.getPixel(x, y);
+            var boardPixel = this.board.getPixel(bx, by);
 
-            if (pt.a <= 127) {
+            if (templatePixel.a <= 127) {
                 // alpha
                 return 0;
             }
 
-            pt.adaptColor();
+            templatePixel.adaptColor();
 
             // ignore color
             var _iteratorNormalCompletion = true;
@@ -349,7 +349,7 @@ var Bot = function () {
                 for (var _iterator = this.ignore[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var ignore = _step.value;
 
-                    if (pt.isEqual(new _pixel2.default(ignore))) {
+                    if (templatePixel.isEqual(new _pixel2.default(ignore))) {
                         return 0;
                     }
                 }
@@ -378,7 +378,7 @@ var Bot = function () {
                 for (var _iterator2 = this.replace[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var replace = _step2.value;
 
-                    if (!pb.isEqual(new _pixel2.default(replace))) {
+                    if (!boardPixel.isEqual(new _pixel2.default(replace))) {
                         return 0;
                     }
                 }
@@ -403,13 +403,13 @@ var Bot = function () {
                 var left = this.board.getPixel(bx - 1, by);
                 var right = this.board.getPixel(bx + 1, by);
 
-                if (pt.isEqual(up) || pt.isEqual(down) || pt.isEqual(left) || pt.isEqual(right)) {
+                if (templatePixel.isEqual(up) || templatePixel.isEqual(down) || templatePixel.isEqual(left) || templatePixel.isEqual(right)) {
                     return 0;
                 }
             }
 
-            if (!pt.isEqual(pb)) {
-                App.color = pt.index;
+            if (!templatePixel.isEqual(boardPixel)) {
+                App.color = templatePixel.index;
                 App.attemptPlace(bx, by);
                 console.log('[' + bx + ' ' + by + ']');
                 return 1;
