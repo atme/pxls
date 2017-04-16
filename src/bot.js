@@ -76,32 +76,32 @@ export default class Bot {
     let y;
     let s;
       if (this.dir == 1) {
-          for (x = 0; x < this.template.canvas.width; x++) {
-              for (y = 0; y < this.template.canvas.height; y++) {
+          for (x = 0; x < this.template.getWidth(); x++) {
+              for (y = 0; y < this.template.getHeight(); y++) {
                   s = this.placePixelAt(x, y);
                   if (s == 0) continue;
                   if (s == 1) return;
               }
           }
       } else if (this.dir == 2) {
-          for (x = this.template.canvas.width - 1; x > 0 ; x--) {
-              for (y = 0; y < this.template.canvas.height; y++) {
+          for (x = this.template.getWidth() - 1; x > 0 ; x--) {
+              for (y = 0; y < this.template.getHeight(); y++) {
                   s = this.placePixelAt(x, y);
                   if (s == 0) continue;
                   if (s == 1) return;
               }
           }
       } else if (this.dir == 3) {
-          for (y = 0; y < this.template.canvas.height; y++) {
-              for (x = 0; x < this.template.canvas.width; x++) {
+          for (y = 0; y < this.template.getHeight(); y++) {
+              for (x = 0; x < this.template.getWidth(); x++) {
                   s = this.placePixelAt(x, y);
                   if (s == 0) continue;
                   if (s == 1) return;
               }
           }
       } else if (this.dir == 4) {
-          for (y = this.template.canvas.height - 1; y > 0 ; y--) {
-              for (x = 0; x < this.template.canvas.width; x++) {
+          for (y = this.template.getHeight() - 1; y > 0 ; y--) {
+              for (x = 0; x < this.template.getWidth(); x++) {
                   s = this.placePixelAt(x, y);
                   if (s == 0) continue;
                   if (s == 1) return;

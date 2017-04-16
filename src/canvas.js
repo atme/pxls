@@ -8,4 +8,12 @@ export default class Canvas {
       this.canvas.data.slice(coordinate, coordinate + rgba)
     );
   }
+
+  getWidth() {
+    return this.canvas.width;
+  }
+
+  getHeight() {
+    return this.canvas.height;
+  }
 }
