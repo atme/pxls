@@ -1,6 +1,9 @@
 import Pixel from './pixel';
 
 export default class Canvas {
+  constructor() {
+  }
+
   getPixel(x, y) {
     const rgba = 4;
     let coordinate = rgba * (y * this.canvas.width + x);

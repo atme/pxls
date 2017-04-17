@@ -420,7 +420,7 @@ var Bot = function () {
 
             if (!templatePixel.isEqual(boardPixel)) {
                 App.color = templatePixel.index;
-                App.attemptPlace(bx, by);
+                App.doPlace(bx, by);
                 console.log('[' + bx + ' ' + by + ']');
                 return 1;
             }
